@@ -2,80 +2,81 @@ server:
   port: 8085
 spring:
   main:
-    allow-bean-definition-overriding:true
+    allow-bean-definition-overriding: true
   shardingsphere:
-    # ²ÎÊıÅäÖÃ£¬ÏÔÊ¾sql
+    # å‚æ•°é…ç½®ï¼Œæ˜¾ç¤ºsql
     props:
       sql:
         show: true
-    # ÅäÖÃÊı¾İÔ´
+    # é…ç½®æ•°æ®æº
     datasource:
-      # ¸øÃ¿¸öÊı¾İÔ´È¡±ğÃû£¬ÏÂÃæ µÄds1,ds2,ds3
+      # ç»™æ¯ä¸ªæ•°æ®æºå–åˆ«åï¼Œä¸‹é¢ çš„ds1,ds2,ds3
       names: ds1,ds2,ds3
-      # ¸ømaster ds1ÅäÖÃÊı¾İ¿âÁ¬½ÓĞÅÏ¢
+      # ç»™master ds1é…ç½®æ•°æ®åº“è¿æ¥ä¿¡æ¯
       ds1:
-        # ÅäÖÃdruidÊı¾İ¿âÔ´
+        # é…ç½®druidæ•°æ®åº“æº
         type: com.alibaba.druid.pool.DruidDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://127.0.0.1:113311/ksd-shading-db?useUnicode=true&characterEncodeding=utf8&serverTimezone=GMT%2b8
+        url: jdbc:mysql://localhost:13311/ksd_shading_db?useUnicode=true&characterEncoding=utf8
         username: root
         password: 123456
         maxPoolSize: 100
         minPoolSize: 5
-      # ÅäÖÃslave
+      # é…ç½®slave
       ds2:
-        # ÅäÖÃdruidÊı¾İ¿âÔ´
+        # é…ç½®druidæ•°æ®åº“æº
         type: com.alibaba.druid.pool.DruidDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://127.0.0.1:113312/ksd-shading-db?useUnicode=true&characterEncodeding=utf8&serverTimezone=GMT%2b8
+        url: jdbc:mysql://localhost:13312/ksd_shading_db?useUnicode=true&characterEncoding=utf8
         username: root
         password: 123456
         maxPoolSize: 100
         minPoolSize: 5
       ds3:
-        # ÅäÖÃdruidÊı¾İ¿âÔ´
+        # é…ç½®druidæ•°æ®åº“æº
         type: com.alibaba.druid.pool.DruidDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://127.0.0.1:113312/ksd-shading-db?useUnicode=true&characterEncodeding=utf8&serverTimezone=GMT%2b8
+        url: jdbc:mysql://localhost:13312/ksd_shading_db?useUnicode=true&characterEncoding=utf8
         username: root
         password: 123456
         maxPoolSize: 100
         minPoolSize: 5
-    # ÅäÖÃsharding
+    # é…ç½®sharding
     sharding:
-      # Ä¬ÈÏÊı¾İÔ´£¬Ö÷ÒªÓĞÅ¶ÄÇ¸öÓëĞ´£¬×¢ÒâÒ»¶¨ÒªÅäÖÃ¶ÁĞ´·ÖÀë
-      # Èç¹û²»ÅäÖÃ£¬ÄÇ¾Í»á°ÑËùÓĞ½Úµã¶¼µ±×÷slave½Úµã
+      # é»˜è®¤æ•°æ®æºï¼Œä¸»è¦æœ‰å“¦é‚£ä¸ªä¸å†™ï¼Œæ³¨æ„ä¸€å®šè¦é…ç½®è¯»å†™åˆ†ç¦»
+      # å¦‚æœä¸é…ç½®ï¼Œé‚£å°±ä¼šæŠŠæ‰€æœ‰èŠ‚ç‚¹éƒ½å½“ä½œslaveèŠ‚ç‚¹
       default-data-source-name: ds1
-      # ÅäÖÃ·Ö±íµÄ¹æÔò
+      # é…ç½®åˆ†è¡¨çš„è§„åˆ™
       tables:
-        # ksd_user Âß¼­±íÃû
+        # ksd_user é€»è¾‘è¡¨å
         ksd_user:
-          # Êı¾İ½Úµã£ºÊı¾İÔ´$->{0..N}.Âß¼­±íÃû$->{0..N}
+          # æ•°æ®èŠ‚ç‚¹ï¼šæ•°æ®æº$->{0..N}.é€»è¾‘è¡¨å$->{0..N}
           actual-data-nodes: ds$->{0..1}.ksd_user$->{0..1}
-          # ²ğ·Ö¿â²ßÂÔ
+          # æ‹†åˆ†åº“ç­–ç•¥
           database-strategy:
             standard:
               shardingColumn: birthday
-              preciseAlgorithmClassName: com.wyb.shardingjdbc.algorithm.BirthdayAlgorithm
-          # ·Ö±í²ßÂÔ
+              preciseAlgorithmClassName: com.wyb.shardingjdbc.config.BirthdayAlgorithm
+          # åˆ†è¡¨ç­–ç•¥
           table-strategy:
             inline:
-              # ·ÖÆ¬×Ö¶Î
+              # åˆ†ç‰‡å­—æ®µ
               sharding-column: age
-              # ·ÖÆ¬Ëã·¨±í´ïÊ½
+              # åˆ†ç‰‡ç®—æ³•è¡¨è¾¾å¼
               algorithm-expression: ksd_user$->{age % 2}
-    # ÅäÖÃÊı¾İÔ´µÄ¶ÁĞ´·ÖÀë£¬µ«ÊÇÊı¾İ¿âÒâÒåµÄÄÇ¸öÒª×öÖ÷´Ó¸´ÖÆ
+    # é…ç½®æ•°æ®æºçš„è¯»å†™åˆ†ç¦»ï¼Œä½†æ˜¯æ•°æ®åº“æ„ä¹‰çš„é‚£ä¸ªè¦åšä¸»ä»å¤åˆ¶
     masterslave:
-      # ÅäÖÃÖ÷´ÓÃû³Æ£¬¿ÉÒÔÈ¥ÈÎºÎÃû×Ö
+      # é…ç½®ä¸»ä»åç§°ï¼Œå¯ä»¥å»ä»»ä½•åå­—
       name: ms
-      # ÅäÖÃÖ÷¿âmaster,¸ºÔğĞ´Èë
+      # é…ç½®ä¸»åº“master,è´Ÿè´£å†™å…¥
       master-data-source-name: ds1
-      # ÅäÖÃ´Ó¿âslave,¸ºÔğĞ´Èë
-      slave-data-source-names: ds2
-      # ÅäÖÃslave½ÚµãµÄ¸ºÔØ¾ùºâ²ßÂÔ£¬²ÉÓÃÂÖÑ¯»úÖÆ
+      # é…ç½®ä»åº“slave,è´Ÿè´£å†™å…¥
+      slave-data-source-names: ds2,ds3
+      # é…ç½®slaveèŠ‚ç‚¹çš„è´Ÿè½½å‡è¡¡ç­–ç•¥ï¼Œé‡‡ç”¨è½®è¯¢æœºåˆ¶
       load-balance-algorithm-type: round_robin
-# ÕûºÏmybtisµÄÅäÖÃ
+# æ•´åˆmybtisçš„é…ç½®
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.wyb.shardingjdbc.entity
+debug: false
 
