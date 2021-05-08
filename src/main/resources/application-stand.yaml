@@ -1,4 +1,4 @@
-# 只分表，不分库
+## 配置根据age是否为基偶数分库分表
 spring:
   shardingsphere:
     # 参数配置，显示sql
@@ -39,11 +39,17 @@ spring:
         # ksd_user 逻辑表名
         ksd_user:
           # 数据节点：数据源$->{0..N}.逻辑表名$->{0..N}
-          actual-data-nodes: ds0.ksd_user$->{0..10}
+          actual-data-nodes: ds$->{0..1}.ksd_user$->{0..1}
+          # 拆分库策略
+          database-strategy:
+            standard:
+              # 把生日2020年放一个库，2021年放一个库
+              shardingColumn: birthday
+              preciseAlgorithmClassName: com.wyb.shardingjdbc.config.BirthdayAlgorithm
           # 分表策略
           table-strategy:
             inline:
               # 分片字段
               sharding-column: age
               # 分片算法表达式
-              algorithm-expression: ksd_user$->{age % 10}
+              algorithm-expression: ksd_user$->{age % 2}
