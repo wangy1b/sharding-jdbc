@@ -30,6 +30,7 @@ class ShardingJdbcApplicationTests {
 		Date date = simpleDateFormat.parse("2020-05-09");
 		user.setBirthday(date);
 		userMapper.addUser(user);
+		System.out.println(user.getId());
 
 	}
 
